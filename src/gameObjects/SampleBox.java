@@ -1,7 +1,6 @@
 package gameObjects;
 
 import game.Game;
-import game.GameSettings;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.dynamics.Body;
@@ -17,7 +16,7 @@ public class SampleBox implements IGameObject {
 	float x, y;
 	boolean isStatic;
 	
-	public SampleBox (int x, int y, boolean stat) {
+	public SampleBox (float x, float y, boolean stat) {
 		this.x = x;
 		this.y = y;
 		this.isStatic = stat;
@@ -32,7 +31,7 @@ public class SampleBox implements IGameObject {
 		else
 			boxDef.type = BodyType.STATIC;
 		
-		boxDef.position.set(x/GameSettings.pixelsToMeters,y/GameSettings.pixelsToMeters);
+		boxDef.position.set(x,y);
 		
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(.75f, .75f);

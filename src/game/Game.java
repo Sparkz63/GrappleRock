@@ -47,10 +47,22 @@ public class Game {
 	// Initialize things
 	private static void initialize() {
 		gameObjects.add(new SampleObject());
-		gameObjects.add(new SampleBox(25,1000, false));
-		gameObjects.add(new SampleBox(640,400, true));
+		gameObjects.add(new SampleBox(20, 33, false));
+		gameObjects.add(new SampleBox(21, 15, true));
 		
-		gameObjects.add(new Obstacle(100,100,100,400));
+		gameObjects.add(new Obstacle(20f, 12,10,2));
+		gameObjects.add(new Obstacle(7.25f, 7, new Vec2 [] {
+				new Vec2(0, 0), new Vec2(3, 1), new Vec2(3, -1)
+		}));
+		
+		Vec2 vertices [] = new Vec2 [7];
+		float a = 0;
+		for (int i = 0; a < Math.toRadians(360); a += Math.toRadians(52), i++) 
+		       vertices[i] = new Vec2( (float) Math.sin(a), (float) Math.cos(a) );
+		
+		
+		gameObjects.add(new Obstacle(350/30, 100/30, vertices));
+
 		
 		for(IGameObject gameObject: gameObjects){
 			gameObject.initialize();
