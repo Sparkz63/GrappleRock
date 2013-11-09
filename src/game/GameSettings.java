@@ -13,4 +13,6 @@ public class GameSettings {
 	public static int targetFPS = 60;
 	
 	public static int pixelsToMeters = 30;		// conversion ratio
+	
+	public static float [] obstacleOutlineColor3f = new float [] {.5f, .5f, .5f};
 }
