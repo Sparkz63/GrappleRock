@@ -1,6 +1,7 @@
 package game;
 
 import gameObjects.IGameObject;
+import gameObjects.LevelEditor;
 import gameObjects.Obstacle;
 import gameObjects.SampleBox;
 import gameObjects.SampleObject;
@@ -15,8 +16,10 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import static org.lwjgl.opengl.GL11.*;
+import static game.Params.*;
 
-public class Game {	
+public class Game {
+	
 	private static long 	lastFrame = getTime();	// Used to calculate Delta Time
 	private static long 	lastFPS = getTime();	// Used to calculate FPS
 	private static int		fpsCounter = 0;			// Used to calculate FPS
@@ -26,10 +29,11 @@ public class Game {
 	
 	public static World world = new World(new Vec2(0f, -10f));				// jBox2d World
     public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
+    
+    public static Obstacle obst; //Temporary, for debugging
 	
 	// update game objects, render, manage timing
 	public static void startGameLoop() {
-		
 		initialize();
 		
 		while (!Display.isCloseRequested()) {
@@ -44,14 +48,28 @@ public class Game {
 		Display.destroy();
 	}
 	
+	public static void startEditorLoop(){
+		LevelEditor.initialize();
+		
+		while (!Display.isCloseRequested()) {
+			deltaTime = getDeltaTime();		// update timers: delta time and fps counter
+			updateFPS();
+			LevelEditor.update();
+			
+			LevelEditor.render();
+		}
+			
+		Display.destroy();
+	}
+	
 	// Initialize things
 	private static void initialize() {
-		gameObjects.add(new SampleObject());
-		gameObjects.add(new SampleBox(20, 33, false));
-		gameObjects.add(new SampleBox(21, 15, true));
+		//gameObjects.add(new SampleObject());
+		//gameObjects.add(new SampleBox(20, 33, false));
+		//gameObjects.add(new SampleBox(21, 15, true));
 		
-		gameObjects.add(new Obstacle(20f, 12,10,2));
-		gameObjects.add(new Obstacle(7.25f, 7, new Vec2 [] {
+		gameObjects.add(new Obstacle(50, 360, 10, 2));
+		gameObjects.add(new Obstacle(725f, 700, new Vec2 [] {
 				new Vec2(0, 0), new Vec2(3, 1), new Vec2(3, -1)
 		}));
 		
@@ -61,8 +79,9 @@ public class Game {
 		       vertices[i] = new Vec2( (float) Math.sin(a), (float) Math.cos(a) );
 		
 		
-		gameObjects.add(new Obstacle(350/30, 100/30, vertices));
+		//gameObjects.add(new Obstacle(350, 100, vertices));
 
+		//obst = new Obstacle
 		
 		for(IGameObject gameObject: gameObjects){
 			gameObject.initialize();
@@ -71,7 +90,7 @@ public class Game {
 	
 	// update all game objects
 	private static void update() {
-		
+	
 		for (IGameObject gameObject : gameObjects){
 			gameObject.update(deltaTime);
 		}
@@ -91,13 +110,13 @@ public class Game {
         Display.setTitle("FPS: " + calculatedFPS); 	// Render FPS counter
         
 		Display.update();						// Render buffer to screen
-		Display.sync(GameSettings.targetFPS);	// sync to xx frames per second
+		Display.sync(Params.targetFPS);	// sync to xx frames per second
 	}
 	
 	// Set up display / LWJGL
 	private static void setUpDisplay() {
 		try {
-			Display.setDisplayMode(new DisplayMode(GameSettings.screenWidth, GameSettings.screenHeight));
+			Display.setDisplayMode(new DisplayMode(Params.screenWidth, Params.screenHeight));
 			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -108,7 +127,7 @@ public class Game {
 	// Set up Projection Matrix
 	private static void setUpMatrices () {
 		glMatrixMode(GL_PROJECTION);
-		glOrtho(0, GameSettings.projectionWidth, 0, GameSettings.projectionHeight, 1, -1);
+		glOrtho(0, Params.projectionWidth, 0, Params.projectionHeight, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		
 	}
@@ -136,10 +155,12 @@ public class Game {
 	    fpsCounter++;
 	}
 	
-	
 	public static void main(String[] argv) {
-		Game.setUpDisplay();
-		Game.setUpMatrices();
-		Game.startGameLoop();
+		setUpDisplay();
+		setUpMatrices();
+		if(editorMode)
+			startEditorLoop();
+		else
+			startGameLoop();
 	}
 }

@@ -1,6 +1,8 @@
 package gameObjects;
 
 import game.Game;
+import static game.Params.*;
+import static game.Global.*;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -29,10 +31,10 @@ public class Obstacle implements IGameObject {
 		BodyDef boxDef = new BodyDef();
 		
 		boxDef.type = BodyType.STATIC;
-		boxDef.position.set(x, y);
+		boxDef.position.set(x * pixelsToMeters + width / 2.0f, y * pixelsToMeters + height / 2.0f);
 		
 		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox((float) (width) / 2f, (float) (height) / 2f);
+		boxShape.setAsBox(width * pixelsToMeters / 2.0f, height * pixelsToMeters / 2.0f);
 		
 		FixtureDef boxFixture = new FixtureDef();
 		boxFixture.density = 1f;
@@ -47,10 +49,10 @@ public class Obstacle implements IGameObject {
 		BodyDef bodyDef = new BodyDef();
 		
 		bodyDef.type = BodyType.STATIC;
-		bodyDef.position.set(x, y);
+		bodyDef.position.set(x * pixelsToMeters, y * pixelsToMeters);
 		
 		PolygonShape bodyShape = new PolygonShape();
-		bodyShape.set(vertices, vertices.length);
+		bodyShape.set(vectorPixelsToMeters(vertices), vertices.length);
 		
 		FixtureDef boxFixture = new FixtureDef();
 		boxFixture.density = 1f;

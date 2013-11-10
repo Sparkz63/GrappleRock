@@ -1,6 +1,6 @@
 package util;
 
 public class Rectangle {
-	public Location position = new Location();
+	public Vertex position = new Vertex();
 	public int width, height;
 }
