@@ -7,9 +7,9 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 
 import static org.lwjgl.opengl.GL11.*;
-import static game.GameSettings.*;
+import static game.Params.*;
 
-public class Renderer {	
+public class Renderer {
 	public static void renderBody(Body body) {
 		glPushMatrix();
 		
@@ -21,7 +21,7 @@ public class Renderer {
 				Vec2 vertices [] = polygonShape.m_vertices;
 				int numVertices = polygonShape.m_count;
 				
-				Vec2 bodyPosition = body.getPosition().mul(pixelsToMeters);
+				Vec2 bodyPosition = body.getPosition().mul(metersToPixels);
 				
 				glTranslatef(bodyPosition.x, bodyPosition.y, 0);
 				glRotated(Math.toDegrees(body.getAngle()), 0, 0, 1);
@@ -31,16 +31,12 @@ public class Renderer {
 				for (int i = 0; i < numVertices; i ++){
 					Vec2 vertex = vertices[i];
 					Vec2 vertex2 = vertices[(i+1) % numVertices];
-						
-					vertex = vertex.mul(pixelsToMeters);
-					vertex2 = vertex2.mul(pixelsToMeters);
 					
-					System.out.print(vertex + ", " + i + ";   ");
-					
+					vertex = vertex.mul(metersToPixels);
+					vertex2 = vertex2.mul(metersToPixels);
 					
 					glVertex2f(vertex.x, vertex.y);
 					glVertex2f(vertex2.x, vertex2.y);
-					
 				}
 				
 				glEnd();
@@ -50,6 +46,4 @@ public class Renderer {
 		
 		glPopMatrix();
 	}
-	
-
 }
