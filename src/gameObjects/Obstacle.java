@@ -93,8 +93,7 @@ public class Obstacle implements IGameObject {
 	@Override
 	public void render() {
 		Renderer.renderSolid(box);
-		
-		//Renderer.renderFrame(box);
+		Renderer.renderFrame(box);
 	}
 
 	@Override

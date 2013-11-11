@@ -24,7 +24,7 @@ public class Renderer {
 		
 		glTranslatef(bodyPosition.x, bodyPosition.y, 0);
 		glRotated(Math.toDegrees(body.getAngle()), 0, 0, 1);
-		glColor3f(obstacleFillColor3f[0], obstacleFillColor3f[1],obstacleFillColor3f[2]);
+		glColor4f(obstacleFillColor4f[0], obstacleFillColor4f[1], obstacleFillColor4f[2], obstacleFillColor4f[3]);
 		glBegin(GL_TRIANGLE_FAN);
 		
 		for (int i = 0; i < numVertices; i++){
@@ -58,7 +58,7 @@ public class Renderer {
 				
 				glTranslatef(bodyPosition.x, bodyPosition.y, 0);
 				glRotated(Math.toDegrees(body.getAngle()), 0, 0, 1);
-				glColor3f(obstacleOutlineColor3f[0], obstacleOutlineColor3f[1],obstacleOutlineColor3f[2]);
+				glColor4f(obstacleOutlineColor4f[0], obstacleOutlineColor4f[1], obstacleOutlineColor4f[2], obstacleOutlineColor4f[3]);
 				glBegin(GL_LINES);
 				
 				for (int i = 0; i < numVertices; i ++){

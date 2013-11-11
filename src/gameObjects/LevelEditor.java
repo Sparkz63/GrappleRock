@@ -2,6 +2,8 @@ package gameObjects;
 
 import static game.Params.*;
 
+import game.Params;
+
 import java.util.ArrayList;
 
 import org.jbox2d.common.Vec2;
@@ -87,8 +89,9 @@ public class LevelEditor {
 	public static void movingUpdate(){
 		//Moving state
 		
-		//Set position of obstacle relative to mouse (using previously calculated offset)
-		obstacles.get(grabbedObstacle).setPosition(new Vec2(Mouse.getX() - movingOffset.x, Mouse.getY() - movingOffset.y));
+		Vec2 newPosition = new Vec2(Mouse.getX() - movingOffset.x, Mouse.getY() - movingOffset.y);
+		newPosition = snapToGrid(newPosition);
+		obstacles.get(grabbedObstacle).setPosition(newPosition);
 		
 
 		if(InputHandler.leftMouseUp())
@@ -115,10 +118,34 @@ public class LevelEditor {
 		
 		renderVertices();
 		
+		renderGrid();
+		
 		Display.update();						// Render buffer to screen
 		Display.sync(targetFPS);				// sync to xx frames per second
 	}
 	
+	private static Vec2 snapToGrid(Vec2 position) {
+		// Snaps a given position to the nearest node on a coordinate plane with smallest unit Params.editorSnapValue
+		
+		int x = (int) (position.x);
+		int y = (int) (position.y);
+		
+		int xMod = x % editorSnapValue;
+		int yMod = y % editorSnapValue;
+		
+		if (xMod > editorSnapValue / 2)
+			x += editorSnapValue - xMod;
+		else
+			x -= xMod;
+		
+		if (yMod > Params.editorSnapValue / 2)
+			y += editorSnapValue - yMod;
+		else
+			y -= yMod;
+		
+		return new Vec2(x, y);
+	}
+
 	public static void renderObstacles(){
 		for(int a = 0; a < obstacles.size(); a++)
 			obstacles.get(a).render();
@@ -127,7 +154,7 @@ public class LevelEditor {
 	public static void renderVertices(){
 		//Render vertices while creating an obstacle
 		
-		glColor3f(obstacleOutlineColor3f[0], obstacleOutlineColor3f[1], obstacleOutlineColor3f[2]);
+		glColor4f(obstacleOutlineColor4f[0], obstacleOutlineColor4f[1], obstacleOutlineColor4f[2], obstacleOutlineColor4f[3]);
 				
 		glBegin(GL_LINES);
 		for(int a = 0; a < inputVertices.size() - 1; a++) {
@@ -140,8 +167,31 @@ public class LevelEditor {
 			glVertex2f(inputVertices.get(0).x + obstaclePosition.x, inputVertices.get(0).y + obstaclePosition.y);
 		}
 		glEnd();
+		
+		glColor3f(1f, 1f, 1f);
 	}
 	
+	private static void renderGrid() {
+		// Render snap grid for obstacles
+		
+		glColor4f(editorSnapGridColor4f[0], editorSnapGridColor4f[1], editorSnapGridColor4f[2], editorSnapGridColor4f[3]);
+		glBegin(GL_POINTS);
+		
+		for (int x = 0; x < projectionWidth; x += editorSnapValue) {
+			for (int y = 0; y < projectionHeight; y += editorSnapValue) {
+				int d = 1;
+				glVertex2i(x-d, y);
+				glVertex2i(x+d, y);
+				glVertex2i(x, y-d);
+				glVertex2i(x, y+d);
+				glVertex2i(x, y);
+			}
+		}
+		
+		glEnd();		
+		glColor3f(1f, 1f, 1f);
+	}
+
 	public static void renderVertices2(){
 		//Render vertices while creating an obstacle
 		
@@ -196,6 +246,10 @@ public class LevelEditor {
 		
 		//Catch mouse position preemptively, so it doesn't change while we're using it
 		Vec2 temp = new Vec2(Mouse.getX(), Mouse.getY());
+		temp = snapToGrid(temp);
+		
+		//temp.x -= temp.x % Params.editorSnapValue;
+		//temp.y -= temp.y % Params.editorSnapValue;
 		
 		//If this is the first vertex, then use it as the obstacle position
 		if(inputVertices.size() == 0)
