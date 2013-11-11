@@ -1,6 +1,6 @@
 package gameObjects;
 
-import game.Params;
+import static game.Params.*;
 
 import java.util.ArrayList;
 
@@ -12,12 +12,18 @@ import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import util.InputHandler;
 
+enum State{Normal, Creating, Moving}
+
 public class LevelEditor {
 	private static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 	private static ArrayList<Vec2> inputVertices = new ArrayList<Vec2>();
 	
 	private static Vec2 obstaclePosition = new Vec2();
+	private static Vec2 movingOffset = new Vec2();
 	private static boolean addingObstacle = false;
+	private static State state = State.Normal;
+	
+	private static int grabbedObstacle;
 	
 	private LevelEditor(){
 		//Private constructor completely prevents instantiation
@@ -29,31 +35,77 @@ public class LevelEditor {
 		//We'll be using the left shift and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
 		InputHandler.watchKey(Keyboard.KEY_RETURN);
+		
+		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 	
 	public static void update(){
 		//Update input flags
 		InputHandler.update();
 		
-		//If user presses left shift, begin adding an obstacle
+		switch(state){
+		case Normal:
+			normalUpdate();
+			break;
+		case Creating:
+			creatingUpdate();
+			break;
+		case Moving:
+			movingUpdate();
+			break;
+		}
+	}
+	
+	public static void normalUpdate(){
+		//Normal state
+
 		if(InputHandler.keyDownEvent(Keyboard.KEY_LSHIFT)){
 			startAddingObstacle();
-			System.out.println("shift down");
+			state = State.Creating;
 		}
 		
-		//If user releases left shift, (try to) create the new obstacle
-		if(InputHandler.keyUpEvent(Keyboard.KEY_LSHIFT)){
-			addObstacle();
-			System.out.println("shift up");
+		//Click activates Moving state
+		if(InputHandler.leftMouseDown()){
+			
+			//If click occurs on an obstacle
+			if((grabbedObstacle = grabObstacle()) != -1){
+			
+				//Get the vector offset between obstacle's position and mouse position
+				movingOffset.x = Mouse.getX() - obstacles.get(grabbedObstacle).getPosition().x;
+				movingOffset.y = Mouse.getY() - obstacles.get(grabbedObstacle).getPosition().y;
+				
+				state = State.Moving;
+			}
 		}
 		
 		//If user presses enter, print out the number of obstacles (unnecessary at this point)
 		if(InputHandler.keyDownEvent(Keyboard.KEY_RETURN))
 			System.out.println(obstacles.size());
+				
+	}
+	
+	public static void movingUpdate(){
+		//Moving state
+		
+		//Set position of obstacle relative to mouse (using previously calculated offset)
+		obstacles.get(grabbedObstacle).setPosition(new Vec2(Mouse.getX() - movingOffset.x, Mouse.getY() - movingOffset.y));
+		
+
+		if(InputHandler.leftMouseUp())
+			state = State.Normal;
+	}
+	
+	public static void creatingUpdate(){
 		
 		//If full click while adding an obstacle, add a new vertex
-		if(addingObstacle && InputHandler.leftMouseDown())
+		if(InputHandler.leftMouseDown())
 			addVertex();
+		
+		//If user releases left shift, (try to) create the new obstacle
+		if(InputHandler.keyUpEvent(Keyboard.KEY_LSHIFT)){
+			addObstacle();
+			state = State.Normal;
+		}
 	}
 	
 	public static void render(){
@@ -64,7 +116,7 @@ public class LevelEditor {
 		renderVertices();
 		
 		Display.update();						// Render buffer to screen
-		Display.sync(Params.targetFPS);	// sync to xx frames per second
+		Display.sync(targetFPS);	// sync to xx frames per second
 	}
 	
 	public static void renderObstacles(){
@@ -82,6 +134,21 @@ public class LevelEditor {
 		glEnd();
 	}
 	
+	public static int grabObstacle(){
+		//Test whether the mouse location is inside an obstacle, and if so, returns the index of that obstacle
+		//(if not, returns -1)
+		
+		int a = 0;
+		
+		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(Mouse.getX(), Mouse.getY())))
+			a++;
+		
+		if(a < obstacles.size())
+			return a;
+		else
+			return -1;
+	}
+	
 	public static void startAddingObstacle(){
 		//Self-explanatory
 		
@@ -92,6 +159,8 @@ public class LevelEditor {
 	public static void addObstacle(){
 		//Create a new obstacle using the current set of vertices
 		
+		addingObstacle = false;
+		
 		//We need at least 3 vertices to define a polygon
 		if(inputVertices.size() < 3)
 			return;
@@ -100,7 +169,7 @@ public class LevelEditor {
 		Vec2[] verts = inputVertices.toArray(new Vec2[inputVertices.size()]);
 		
 		obstacles.add(new Obstacle(obstaclePosition.x, obstaclePosition.y, verts));
-		
+
 		inputVertices.clear();
 	}
 	
