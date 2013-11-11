@@ -54,8 +54,8 @@ public class Game {
 		while (!Display.isCloseRequested()) {
 			deltaTime = getDeltaTime();		// update timers: delta time and fps counter
 			updateFPS();
-			LevelEditor.update();
 			
+			LevelEditor.update();
 			LevelEditor.render();
 		}
 			
@@ -64,22 +64,20 @@ public class Game {
 	
 	// Initialize things
 	private static void initialize() {
-		//gameObjects.add(new SampleObject());
-		//gameObjects.add(new SampleBox(20, 33, false));
-		//gameObjects.add(new SampleBox(21, 15, true));
+		gameObjects.add(new SampleBox(20, 33, false));
+		gameObjects.add(new SampleBox(21, 15, true));
 		
-		gameObjects.add(new Obstacle(50, 360, 10, 2));
-		gameObjects.add(new Obstacle(725f, 700, new Vec2 [] {
-				new Vec2(0, 0), new Vec2(3, 1), new Vec2(3, -1)
+		gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
+				new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
 		}));
 		
 		Vec2 vertices [] = new Vec2 [7];
 		float a = 0;
 		for (int i = 0; a < Math.toRadians(360); a += Math.toRadians(52), i++) 
-		       vertices[i] = new Vec2( (float) Math.sin(a), (float) Math.cos(a) );
+		       vertices[i] = new Vec2( (float) Math.sin(a) * 30, (float) Math.cos(a) * 30);
 		
 		
-		//gameObjects.add(new Obstacle(350, 100, vertices));
+		gameObjects.add(new Obstacle(425, 200, vertices));
 
 		//obst = new Obstacle
 		

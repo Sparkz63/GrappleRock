@@ -116,7 +116,7 @@ public class LevelEditor {
 		renderVertices();
 		
 		Display.update();						// Render buffer to screen
-		Display.sync(targetFPS);	// sync to xx frames per second
+		Display.sync(targetFPS);				// sync to xx frames per second
 	}
 	
 	public static void renderObstacles(){
@@ -127,13 +127,31 @@ public class LevelEditor {
 	public static void renderVertices(){
 		//Render vertices while creating an obstacle
 		
+		glColor3f(obstacleOutlineColor3f[0], obstacleOutlineColor3f[1], obstacleOutlineColor3f[2]);
+				
+		glBegin(GL_LINES);
+		for(int a = 0; a < inputVertices.size() - 1; a++) {
+			glVertex2f(inputVertices.get(a).x + obstaclePosition.x, inputVertices.get(a).y + obstaclePosition.y);
+			glVertex2f(inputVertices.get(a+1).x + obstaclePosition.x, inputVertices.get(a+1).y + obstaclePosition.y);
+		}
+		
+		if (inputVertices.size() > 2) {
+			glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
+			glVertex2f(inputVertices.get(0).x + obstaclePosition.x, inputVertices.get(0).y + obstaclePosition.y);
+		}
+		glEnd();
+	}
+	
+	public static void renderVertices2(){
+		//Render vertices while creating an obstacle
+		
 		glColor4f(0, 1, 0, 1);
 		glBegin(GL_POINTS);
 		for(int a = 0; a < inputVertices.size(); a++)
 			glVertex2f(inputVertices.get(a).x + obstaclePosition.x, inputVertices.get(a).y + obstaclePosition.y);
 		glEnd();
 	}
-	
+
 	public static int grabObstacle(){
 		//Test whether the mouse location is inside an obstacle, and if so, returns the index of that obstacle
 		//(if not, returns -1)

@@ -45,7 +45,7 @@ public class Obstacle implements IGameObject {
 		box.createFixture(boxFixture);
 	}
 	
-	public Obstacle (float x, float y, Vec2 vertices []){
+	public Obstacle (float x, float y, Vec2 vertices []){		
 		BodyDef bodyDef = new BodyDef();
 		
 		bodyDef.type = BodyType.STATIC;

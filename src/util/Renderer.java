@@ -24,7 +24,7 @@ public class Renderer {
 		
 		glTranslatef(bodyPosition.x, bodyPosition.y, 0);
 		glRotated(Math.toDegrees(body.getAngle()), 0, 0, 1);
-		glColor3f(obstacleOutlineColor3f[0], obstacleOutlineColor3f[2],obstacleOutlineColor3f[2]);
+		glColor3f(obstacleFillColor3f[0], obstacleFillColor3f[1],obstacleFillColor3f[2]);
 		glBegin(GL_TRIANGLE_FAN);
 		
 		for (int i = 0; i < numVertices; i++){
@@ -37,7 +37,7 @@ public class Renderer {
 			glVertex2f(vertex.x, vertex.y);
 			//glVertex2f(vertex2.x, vertex2.y);
 		}
-		
+		glColor3f(1f, 1f, 1f);
 		glEnd();
 		
 		glPopMatrix();
@@ -58,7 +58,7 @@ public class Renderer {
 				
 				glTranslatef(bodyPosition.x, bodyPosition.y, 0);
 				glRotated(Math.toDegrees(body.getAngle()), 0, 0, 1);
-				glColor3f(obstacleOutlineColor3f[0], obstacleOutlineColor3f[2],obstacleOutlineColor3f[2]);
+				glColor3f(obstacleOutlineColor3f[0], obstacleOutlineColor3f[1],obstacleOutlineColor3f[2]);
 				glBegin(GL_LINES);
 				
 				for (int i = 0; i < numVertices; i ++){
@@ -71,7 +71,7 @@ public class Renderer {
 					glVertex2f(vertex.x, vertex.y);
 					glVertex2f(vertex2.x, vertex2.y);
 				}
-				
+				glColor3f(1f, 1f, 1f);
 				glEnd();
 				
 			}

@@ -50,7 +50,7 @@ public class SampleBox implements IGameObject {
 
 	@Override
 	public void render() {
-		Renderer.renderBody(box);
+		Renderer.renderSolid(box);
 	}
 
 	@Override
