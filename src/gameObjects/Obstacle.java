@@ -63,6 +63,24 @@ public class Obstacle implements IGameObject {
 		box.createFixture(boxFixture);
 	}
 	
+	public void setPosition(Vec2 pos){
+		pos.x *= pixelsToMeters;
+		pos.y *= pixelsToMeters;
+		box.setTransform(pos,  0);
+	}
+	
+	public Vec2 getPosition(){
+		Vec2 temp = new Vec2(box.getPosition());
+		temp.x = temp.x * metersToPixels;
+		temp.y = temp.y * metersToPixels;
+
+		return temp;
+	}
+	
+	public boolean testPoint(Vec2 point){
+		return box.getFixtureList().testPoint(new Vec2(point.x * pixelsToMeters, point.y * pixelsToMeters));
+	}
+	
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
@@ -74,7 +92,9 @@ public class Obstacle implements IGameObject {
 
 	@Override
 	public void render() {
-		Renderer.renderBody(box);
+		Renderer.renderSolid(box);
+		
+		//Renderer.renderFrame(box);
 	}
 
 	@Override

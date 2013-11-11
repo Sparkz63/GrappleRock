@@ -40,6 +40,7 @@ class KeyEvent{
 		
 		boolean temp = downEvent;
 		downEvent = false;
+		upEvent = false;
 		return temp;
 	}
 	
@@ -48,6 +49,7 @@ class KeyEvent{
 		
 		boolean temp = upEvent;
 		upEvent = false;
+		downEvent = false;
 		return temp;
 	}
 }
