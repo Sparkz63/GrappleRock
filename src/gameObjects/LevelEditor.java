@@ -12,7 +12,7 @@ import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import util.InputHandler;
 
-enum State{Normal, Creating, Moving}
+enum State{Normal, Creating, Moving, Modifying}
 
 public class LevelEditor {
 	private static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
@@ -44,6 +44,7 @@ public class LevelEditor {
 		InputHandler.update();
 		
 		switch(state){
+		case Modifying:
 		case Normal:
 			normalUpdate();
 			break;
@@ -69,10 +70,10 @@ public class LevelEditor {
 			
 			//If click occurs on an obstacle
 			if((grabbedObstacle = grabObstacle()) != -1){
-			
+				
 				//Get the vector offset between obstacle's position and mouse position
-				movingOffset.x = Mouse.getX() - obstacles.get(grabbedObstacle).getPosition().x;
-				movingOffset.y = Mouse.getY() - obstacles.get(grabbedObstacle).getPosition().y;
+				movingOffset.x = InputHandler.mouse().x - obstacles.get(grabbedObstacle).getPosition().x;
+				movingOffset.y = InputHandler.mouse().y - obstacles.get(grabbedObstacle).getPosition().y;
 				
 				state = State.Moving;
 			}
@@ -88,9 +89,8 @@ public class LevelEditor {
 		//Moving state
 		
 		//Set position of obstacle relative to mouse (using previously calculated offset)
-		obstacles.get(grabbedObstacle).setPosition(new Vec2(Mouse.getX() - movingOffset.x, Mouse.getY() - movingOffset.y));
+		obstacles.get(grabbedObstacle).setPosition(new Vec2(InputHandler.mouse().x - movingOffset.x, InputHandler.mouse().y - movingOffset.y));
 		
-
 		if(InputHandler.leftMouseUp())
 			state = State.Normal;
 	}
@@ -127,10 +127,18 @@ public class LevelEditor {
 	public static void renderVertices(){
 		//Render vertices while creating an obstacle
 		
-		glColor4f(0, 1, 0, 1);
-		glBegin(GL_POINTS);
-		for(int a = 0; a < inputVertices.size(); a++)
+		if(inputVertices.size() < 1)
+			return;
+		
+		glColor4f(0, 0, 0, 1);
+
+		glBegin(GL_LINES);
+		for(int a = 0; a < inputVertices.size(); a++){
 			glVertex2f(inputVertices.get(a).x + obstaclePosition.x, inputVertices.get(a).y + obstaclePosition.y);
+			glVertex2f(inputVertices.get((a + 1) % inputVertices.size()).x + obstaclePosition.x, inputVertices.get((a + 1) % inputVertices.size()).y + obstaclePosition.y);
+		}
+		glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
+		glVertex2f(InputHandler.mouse().x, InputHandler.mouse().y);
 		glEnd();
 	}
 	
@@ -140,7 +148,7 @@ public class LevelEditor {
 		
 		int a = 0;
 		
-		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(Mouse.getX(), Mouse.getY())))
+		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(InputHandler.mouse().x, InputHandler.mouse().y)))
 			a++;
 		
 		if(a < obstacles.size())
@@ -175,15 +183,12 @@ public class LevelEditor {
 	
 	public static void addVertex(){
 		//Add a vertex at current mouse location
-		
-		//Catch mouse position preemptively, so it doesn't change while we're using it
-		Vec2 temp = new Vec2(Mouse.getX(), Mouse.getY());
-		
+
 		//If this is the first vertex, then use it as the obstacle position
 		if(inputVertices.size() == 0)
-			obstaclePosition = temp;
-		
+			obstaclePosition = new Vec2(InputHandler.mouse());
+
 		//Add localized vertex (that is, relative to the obstacle's position)
-		inputVertices.add(new Vec2(temp.x - obstaclePosition.x, temp.y - obstaclePosition.y));
+		inputVertices.add(new Vec2(InputHandler.mouse().x - obstaclePosition.x, InputHandler.mouse().y - obstaclePosition.y));
 	}
 }
