@@ -22,5 +22,6 @@ public class Params {
 	public static final float [] obstacleOutlineColor4f = new float [] {0f, .7f, 0f, .9f};
 	public static final float [] obstacleFillColor4f = new float [] {.1f, .1f, 1f, .7f};
 	
+	public static final int editorGridPointSize = 2;
 	public static final float [] editorSnapGridColor4f = new float [] {0f, 0f, 0f, .5f};
 }

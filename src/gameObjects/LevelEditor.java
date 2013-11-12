@@ -166,7 +166,8 @@ public class LevelEditor {
 		
 		if (inputVertices.size() > 0) {
 			glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
-			glVertex2f(InputHandler.mouse().x, InputHandler.mouse().y);
+			Vec2 snappedMousePosition = snapToGrid(new Vec2 (InputHandler.mouse()));
+			glVertex2f(snappedMousePosition.x, snappedMousePosition.y);
 		}
 
 		
@@ -184,7 +185,7 @@ public class LevelEditor {
 		// Render snap grid for obstacles
 		
 		glColor4f(editorSnapGridColor4f[0], editorSnapGridColor4f[1], editorSnapGridColor4f[2], editorSnapGridColor4f[3]);
-		glPointSize(3);
+		glPointSize(editorGridPointSize);
 		glBegin(GL_POINTS);
 		
 		for (int x = 0; x < projectionWidth; x += editorSnapValue) {
