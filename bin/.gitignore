@@ -12,12 +12,3 @@
 /Temps
 .classpath
 *.class
-/lib
-/links and misc
-/.gitattributes
-/.gitignore
-/.project
-/JustInCase
-/game
-/gameObjects
-/util
