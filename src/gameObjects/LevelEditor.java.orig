@@ -90,12 +90,15 @@ public class LevelEditor {
 	public static void movingUpdate(){
 		//Moving state
 		
-		Vec2 newPosition = new Vec2(InputHandler.mouse().x - movingOffset.x, InputHandler.mouse().y - movingOffset.y);
+<<<<<<< HEAD
+		Vec2 newPosition = new Vec2(Mouse.getX() - movingOffset.x, Mouse.getY() - movingOffset.y);
 		newPosition = snapToGrid(newPosition);
-		
 		obstacles.get(grabbedObstacle).setPosition(newPosition);
+=======
+		//Set position of obstacle relative to mouse (using previously calculated offset)
+		obstacles.get(grabbedObstacle).setPosition(new Vec2(InputHandler.mouse().x - movingOffset.x, InputHandler.mouse().y - movingOffset.y));
+>>>>>>> origin/pr/3
 		
-
 		if(InputHandler.leftMouseUp())
 			state = State.Normal;
 	}
@@ -156,6 +159,7 @@ public class LevelEditor {
 	public static void renderVertices(){
 		//Render vertices while creating an obstacle
 		
+<<<<<<< HEAD
 		glColor4f(obstacleOutlineColor4f[0], obstacleOutlineColor4f[1], obstacleOutlineColor4f[2], obstacleOutlineColor4f[3]);
 				
 		glBegin(GL_LINES);
@@ -164,17 +168,10 @@ public class LevelEditor {
 			glVertex2f(inputVertices.get(a+1).x + obstaclePosition.x, inputVertices.get(a+1).y + obstaclePosition.y);
 		}
 		
-		if (inputVertices.size() > 0) {
-			glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
-			glVertex2f(InputHandler.mouse().x, InputHandler.mouse().y);
-		}
-
-		
 		if (inputVertices.size() > 2) {
 			glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
 			glVertex2f(inputVertices.get(0).x + obstaclePosition.x, inputVertices.get(0).y + obstaclePosition.y);
 		}
-		
 		glEnd();
 		
 		glColor3f(1f, 1f, 1f);
@@ -184,17 +181,44 @@ public class LevelEditor {
 		// Render snap grid for obstacles
 		
 		glColor4f(editorSnapGridColor4f[0], editorSnapGridColor4f[1], editorSnapGridColor4f[2], editorSnapGridColor4f[3]);
-		glPointSize(3);
 		glBegin(GL_POINTS);
 		
 		for (int x = 0; x < projectionWidth; x += editorSnapValue) {
 			for (int y = 0; y < projectionHeight; y += editorSnapValue) {
+				int d = 1;
+				glVertex2i(x-d, y);
+				glVertex2i(x+d, y);
+				glVertex2i(x, y-d);
+				glVertex2i(x, y+d);
 				glVertex2i(x, y);
 			}
 		}
 		
 		glEnd();		
 		glColor3f(1f, 1f, 1f);
+	}
+
+	public static void renderVertices2(){
+		//Render vertices while creating an obstacle
+		
+		glColor4f(0, 1, 0, 1);
+		glBegin(GL_POINTS);
+		for(int a = 0; a < inputVertices.size(); a++)
+=======
+		if(inputVertices.size() < 1)
+			return;
+		
+		glColor4f(0, 0, 0, 1);
+
+		glBegin(GL_LINES);
+		for(int a = 0; a < inputVertices.size(); a++){
+>>>>>>> origin/pr/3
+			glVertex2f(inputVertices.get(a).x + obstaclePosition.x, inputVertices.get(a).y + obstaclePosition.y);
+			glVertex2f(inputVertices.get((a + 1) % inputVertices.size()).x + obstaclePosition.x, inputVertices.get((a + 1) % inputVertices.size()).y + obstaclePosition.y);
+		}
+		glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
+		glVertex2f(InputHandler.mouse().x, InputHandler.mouse().y);
+		glEnd();
 	}
 
 	public static int grabObstacle(){
@@ -238,19 +262,23 @@ public class LevelEditor {
 	
 	public static void addVertex(){
 		//Add a vertex at current mouse location
+<<<<<<< HEAD
+		
+		//Catch mouse position preemptively, so it doesn't change while we're using it
+		Vec2 temp = new Vec2(Mouse.getX(), Mouse.getY());
+		temp = snapToGrid(temp);
+		
+		//temp.x -= temp.x % Params.editorSnapValue;
+		//temp.y -= temp.y % Params.editorSnapValue;
+		
+=======
 
-		//Snap mouse position to grid
-		Vec2 temp = new Vec2(InputHandler.mouse().x, InputHandler.mouse().y);
-
+>>>>>>> origin/pr/3
 		//If this is the first vertex, then use it as the obstacle position
 		if(inputVertices.size() == 0)
-			obstaclePosition = snapToGrid(new Vec2(InputHandler.mouse()));
-		
-		temp = snapToGrid(temp);	
-		temp.x -= obstaclePosition.x;
-		temp.y -= obstaclePosition.y;
-		
+			obstaclePosition = new Vec2(InputHandler.mouse());
+
 		//Add localized vertex (that is, relative to the obstacle's position)
-		inputVertices.add(temp);
+		inputVertices.add(new Vec2(InputHandler.mouse().x - obstaclePosition.x, InputHandler.mouse().y - obstaclePosition.y));
 	}
 }

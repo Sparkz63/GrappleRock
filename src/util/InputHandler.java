@@ -3,6 +3,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -37,6 +38,7 @@ class KeyEvent{
 	public boolean downEvent(){
 		//(TestAndSet algorithm) Return the value of the downEvent flag, but set it to false first.
 		//This prevents an event from being handled more than once
+		//Experimental: currently resets both flags
 		
 		boolean temp = downEvent;
 		downEvent = false;
@@ -56,11 +58,10 @@ class KeyEvent{
 
 public class InputHandler {
 	
-	private static boolean leftButton = false;
-	private static boolean clickRegistered = false;
 	private static Set<Integer> watching = new HashSet<Integer>();
 	private static KeyEvent keyEvents[] = new KeyEvent[256];
 	private static KeyEvent leftMouseEvent = new KeyEvent();
+	private static Vec2 mouse = new Vec2();
 	
 	public static void create(){
 		//Basically a constructor that must be called explicitly before InputHandler can be used
@@ -74,7 +75,9 @@ public class InputHandler {
 	}
 	
 	public static void update(){
-		checkMouse();
+		getMouseLocation();
+		
+		checkMouseButtons();
 		
 		checkKeys();
 	}
@@ -92,7 +95,12 @@ public class InputHandler {
 		}
 	}
 	
-	public static void checkMouse(){
+	public static void getMouseLocation(){
+		mouse.x = Mouse.getX();
+		mouse.y = Mouse.getY();
+	}
+	
+	public static void checkMouseButtons(){
 		leftMouseEvent.updateEvents(Mouse.isButtonDown(0));
 	}
 	
@@ -101,6 +109,10 @@ public class InputHandler {
 		//The alternative would be to watch the state of every single key on the keyboard. Fuck that
 		
 		watching.add(key);
+	}
+	
+	public static Vec2 mouse(){
+		return mouse;
 	}
 
 	public static boolean leftMouseDown(){

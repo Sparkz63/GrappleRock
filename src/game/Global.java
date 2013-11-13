@@ -13,4 +13,8 @@ public class Global {
 		}
 		return vectors;	
 	}
+	
+	public static float dist(Vec2 v1, Vec2 v2){
+		return (float)Math.sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y)* (v1.y - v2.y));
+	}
 }

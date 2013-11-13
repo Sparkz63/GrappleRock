@@ -81,6 +81,12 @@ public class Obstacle implements IGameObject {
 		return box.getFixtureList().testPoint(new Vec2(point.x * pixelsToMeters, point.y * pixelsToMeters));
 	}
 	
+	//public Vec2 vertexNear(Vec2 point){
+		//Vec2 localPosition = new Vec2(point.x - (box.getPosition().x * metersToPixels), point.y - (box.getPosition().y * metersToPixels));
+		
+		//return new Vec2();
+	//}
+	
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub

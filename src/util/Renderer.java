@@ -12,6 +12,8 @@ import static game.Params.*;
 public class Renderer {
 	
 	public static void renderSolid(Body body){
+		//Renders a solid color using triangle fan. Also renders the origin as a point
+		
 		glPushMatrix();
 		
 		Fixture f = body.getFixtureList();
@@ -38,6 +40,14 @@ public class Renderer {
 			//glVertex2f(vertex2.x, vertex2.y);
 		}
 		glColor3f(1f, 1f, 1f);
+		glEnd();
+		
+		glPointSize(5);
+		glColor4f(0, 0, 1, 1);
+		glBegin(GL_POINTS);
+		
+		glVertex2f(0, 0);
+		
 		glEnd();
 		
 		glPopMatrix();
