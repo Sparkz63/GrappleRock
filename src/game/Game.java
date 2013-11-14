@@ -3,6 +3,7 @@ package game;
 import gameObjects.IGameObject;
 import gameObjects.LevelEditor;
 import gameObjects.Obstacle;
+import gameObjects.Player;
 import gameObjects.SampleBox;
 import gameObjects.SampleObject;
 
@@ -29,6 +30,7 @@ public class Game {
 	
 	public static World world = new World(new Vec2(0f, -10f));				// jBox2d World
     public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
+    public static Player player;
     
     public static Obstacle obst; //Temporary, for debugging
 	
@@ -64,6 +66,8 @@ public class Game {
 	
 	// Initialize things
 	private static void initialize() {
+		player = new Player(new Vec2(100, 100));
+		
 		gameObjects.add(new SampleBox(20, 33, false));
 		gameObjects.add(new SampleBox(21, 15, true));
 		
@@ -84,6 +88,9 @@ public class Game {
 		for(IGameObject gameObject: gameObjects){
 			gameObject.initialize();
 		}
+		
+		player.initialize();
+		
 	}
 	
 	// update all game objects
@@ -92,6 +99,8 @@ public class Game {
 		for (IGameObject gameObject : gameObjects){
 			gameObject.update(deltaTime);
 		}
+		
+		player.update(deltaTime);
 		
 		world.step((float) deltaTime / 1000f, 8, 3);
 	}
@@ -104,6 +113,8 @@ public class Game {
 		for (IGameObject gameObject : gameObjects){
 			gameObject.render();
 		}
+		
+		player.render();
 		
         Display.setTitle("FPS: " + calculatedFPS); 	// Render FPS counter
         
