@@ -4,7 +4,6 @@ import java.awt.Toolkit;
 // Holder for general purpose settings of our game
 public class Params {
 	
-	
 	public static final boolean editorMode = false;	//True if running level editor, false if playing game
 	public static final	int	editorSnapValue = 32;	
 	
