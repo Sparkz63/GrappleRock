@@ -43,7 +43,7 @@ public class Renderer {
 		glEnd();
 		
 		glPointSize(5);
-		glColor4f(0, 0, 1, 1);
+		glColor4f(1, 0, 1, 1);
 		glBegin(GL_POINTS);
 		
 		glVertex2f(0, 0);
