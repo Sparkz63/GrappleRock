@@ -12,18 +12,18 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 import util.Renderer;
-import util.Texture;
+//import util.Texture;
 
 public class Obstacle implements IGameObject {
 	float		rotation = 0;
 	Body		box;
 	
 	int			breakAwayTimer = -1;
-	Path		followPath;
+	//Path		followPath;
 	boolean		deadly;
 	boolean 	willKnockTheGuyOffTheRope;
 	
-	Texture		texture;
+	//Texture		texture;
 	
 	// Constructors...
 

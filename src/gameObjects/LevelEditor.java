@@ -109,6 +109,7 @@ public class LevelEditor {
 		//If user releases left shift, (try to) create the new obstacle
 		if(InputHandler.keyUpEvent(Keyboard.KEY_LSHIFT)){
 			addObstacle();
+			inputVertices.clear();
 			state = State.Normal;
 		}
 	}
@@ -156,8 +157,8 @@ public class LevelEditor {
 	public static void renderVertices(){
 		//Render vertices while creating an obstacle
 		
-		glColor4f(obstacleOutlineColor4f[0], obstacleOutlineColor4f[1], obstacleOutlineColor4f[2], obstacleOutlineColor4f[3]);
-				
+		glColor4f(editorObstacleCreationColor4f[0], editorObstacleCreationColor4f[1], editorObstacleCreationColor4f[2], editorObstacleCreationColor4f[3]);
+		glLineWidth(editorGridLineWidth);
 		glBegin(GL_LINES);
 		for(int a = 0; a < inputVertices.size() - 1; a++) {
 			glVertex2f(inputVertices.get(a).x + obstaclePosition.x, inputVertices.get(a).y + obstaclePosition.y);
