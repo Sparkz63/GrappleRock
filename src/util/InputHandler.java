@@ -6,6 +6,7 @@ import java.util.Set;
 import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import static game.Params.*;
 
 class KeyEvent{
 	private boolean isDown, downEvent, upEvent;
@@ -96,8 +97,8 @@ public class InputHandler {
 	}
 	
 	public static void getMouseLocation(){
-		mouse.x = Mouse.getX();
-		mouse.y = Mouse.getY();
+		mouse.x = Mouse.getX() * windowToProjCoords;
+		mouse.y = Mouse.getY() * windowToProjCoords;
 	}
 	
 	public static void checkMouseButtons(){

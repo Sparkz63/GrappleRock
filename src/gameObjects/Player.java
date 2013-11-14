@@ -21,7 +21,7 @@ public class Player implements IGameObject {
 		
 		BodyDef boxDef = new BodyDef();
 		
-		boxDef.type = BodyType.DYNAMIC;
+		boxDef.type = BodyType.STATIC;//DYNAMIC;
 		boxDef.position.set(position.x * pixelsToMeters, position.y * pixelsToMeters);
 		
 		PolygonShape boxShape = new PolygonShape();
