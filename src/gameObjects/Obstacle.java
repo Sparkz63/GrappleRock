@@ -31,7 +31,7 @@ public class Obstacle implements IGameObject {
 		BodyDef boxDef = new BodyDef();
 		
 		boxDef.type = BodyType.STATIC;
-		boxDef.position.set(x * pixelsToMeters + width / 2.0f, y * pixelsToMeters + height / 2.0f);
+		boxDef.position.set((x + width / 2.0f) * pixelsToMeters, (y + height / 2.0f) * pixelsToMeters);
 		
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width * pixelsToMeters / 2.0f, height * pixelsToMeters / 2.0f);

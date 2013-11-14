@@ -7,6 +7,7 @@ import gameObjects.Player;
 import gameObjects.SampleBox;
 import gameObjects.SampleObject;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.awt.Toolkit;
@@ -31,6 +32,7 @@ public class Game {
 	
 	public static World world = new World(new Vec2(0f, -10f));				// jBox2d World
     public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
+    public static ArrayList<Obstacle> obstacles;
     public static Player player;
     
     public static Obstacle obst; //Temporary, for debugging
@@ -75,6 +77,8 @@ public class Game {
 		gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
 				new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
 		}));
+		
+		gameObjects.add(new Obstacle(100, 800, 800, 100));
 		
 		Vec2 vertices [] = new Vec2 [7];
 		float a = 0;
