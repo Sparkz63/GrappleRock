@@ -8,6 +8,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
+import util.Camera;
+import gameObjects.CameraController;
 import util.InputHandler;
 
 enum State{Normal, Creating, Moving, Modifying}
@@ -16,9 +18,11 @@ public class LevelEditor {
 	private static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 	private static ArrayList<Vec2> inputVertices = new ArrayList<Vec2>();
 	
+	private static Camera camera = new Camera(0, 0);
+	private static CameraController cameraController = new CameraController(camera);
+	
 	private static Vec2 obstaclePosition = new Vec2();
 	private static Vec2 movingOffset = new Vec2();
-	private static boolean addingObstacle = false;
 	private static State state = State.Normal;
 	
 	private static int grabbedObstacle = -1;
@@ -29,6 +33,7 @@ public class LevelEditor {
 	
 	public static void initialize(){
 		InputHandler.create();
+		InputHandler.setCamera(camera);
 		
 		//We'll be using the left shift, d key, and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
@@ -38,9 +43,11 @@ public class LevelEditor {
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 	
-	public static void update(){
+	public static void update(int deltaTime){
 		//Update input flags
 		InputHandler.update();
+		
+		cameraController.update(deltaTime);
 		
 		switch(state){
 		case Modifying:
@@ -107,12 +114,15 @@ public class LevelEditor {
 		//If user releases left shift, (try to) create the new obstacle
 		if(InputHandler.keyUpEvent(Keyboard.KEY_LSHIFT)){
 			addObstacle();
+			inputVertices.clear();
 			state = State.Normal;
 		}
 	}
 	
 	public static void render(){
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		camera.adjustViewMatrix();
 		
 		renderObstacles();
 		
@@ -154,8 +164,8 @@ public class LevelEditor {
 	public static void renderVertices(){
 		//Render vertices while creating an obstacle
 		
-		glColor4f(obstacleOutlineColor4f[0], obstacleOutlineColor4f[1], obstacleOutlineColor4f[2], obstacleOutlineColor4f[3]);
-				
+		glColor4f(editorObstacleCreationColor4f[0], editorObstacleCreationColor4f[1], editorObstacleCreationColor4f[2], editorObstacleCreationColor4f[3]);
+		glLineWidth(editorGridLineWidth);
 		glBegin(GL_LINES);
 		for(int a = 0; a < inputVertices.size() - 1; a++) {
 			glVertex2f(inputVertices.get(a).x + obstaclePosition.x, inputVertices.get(a).y + obstaclePosition.y);
@@ -214,14 +224,11 @@ public class LevelEditor {
 	public static void startAddingObstacle(){
 		//Self-explanatory
 		
-		addingObstacle = true;
 		inputVertices.clear();
 	}
 	
 	public static void addObstacle(){
 		//Create a new obstacle using the current set of vertices
-		
-		addingObstacle = false;
 		
 		//We need at least 3 vertices to define a polygon
 		if(inputVertices.size() < 3)

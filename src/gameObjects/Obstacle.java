@@ -12,18 +12,18 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 import util.Renderer;
-import util.Texture;
+//import util.Texture;
 
 public class Obstacle implements IGameObject {
 	float		rotation = 0;
 	Body		box;
 	
 	int			breakAwayTimer = -1;
-	Path		followPath;
+	//Path		followPath;
 	boolean		deadly;
 	boolean 	willKnockTheGuyOffTheRope;
 	
-	Texture		texture;
+	//Texture		texture;
 	
 	// Constructors...
 
@@ -31,7 +31,7 @@ public class Obstacle implements IGameObject {
 		BodyDef boxDef = new BodyDef();
 		
 		boxDef.type = BodyType.STATIC;
-		boxDef.position.set(x * pixelsToMeters + width / 2.0f, y * pixelsToMeters + height / 2.0f);
+		boxDef.position.set((x + width / 2.0f) * pixelsToMeters, (y + height / 2.0f) * pixelsToMeters);
 		
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width * pixelsToMeters / 2.0f, height * pixelsToMeters / 2.0f);

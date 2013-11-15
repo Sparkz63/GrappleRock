@@ -10,5 +10,6 @@
 /Library/ScriptAssemblies
 /obj
 /Temps
+/bin
 .classpath
 *.class

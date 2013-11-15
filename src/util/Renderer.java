@@ -31,25 +31,21 @@ public class Renderer {
 		
 		for (int i = 0; i < numVertices; i++){
 			Vec2 vertex = vertices[i];
-			//Vec2 vertex2 = vertices[(i+1) % numVertices];
 			
 			vertex = vertex.mul(metersToPixels);
-			//vertex2 = vertex2.mul(metersToPixels);
 			
 			glVertex2f(vertex.x, vertex.y);
-			//glVertex2f(vertex2.x, vertex2.y);
 		}
-		glColor3f(1f, 1f, 1f);
 		glEnd();
 		
-		glPointSize(5);
-		glColor4f(0, 0, 1, 1);
+		/*glPointSize(5);
+		glColor4f(1, 0, 1, 1);
 		glBegin(GL_POINTS);
 		
 		glVertex2f(0, 0);
 		
 		glEnd();
-		
+		*/
 		glPopMatrix();
 	}
 	
@@ -69,6 +65,7 @@ public class Renderer {
 				glTranslatef(bodyPosition.x, bodyPosition.y, 0);
 				glRotated(Math.toDegrees(body.getAngle()), 0, 0, 1);
 				glColor4f(obstacleOutlineColor4f[0], obstacleOutlineColor4f[1], obstacleOutlineColor4f[2], obstacleOutlineColor4f[3]);
+				glLineWidth(obstacleOutlineSize);
 				glBegin(GL_LINES);
 				
 				for (int i = 0; i < numVertices; i ++){
