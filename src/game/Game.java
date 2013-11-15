@@ -21,12 +21,12 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-<<<<<<< HEAD
+
 import util.Renderer;
-=======
+
 import util.Camera;
 import util.InputHandler;
->>>>>>> master
+
 import static org.lwjgl.opengl.GL11.*;
 import static game.Params.*;
 
@@ -87,19 +87,19 @@ public class Game {
 			camera.setRestrictingCoordinates(-100, -100, screenWidth + 100, screenHeight + 100);
 		
 			CameraController cameraController = new CameraController(camera);
-			gameObjects.add(cameraController);
+			//gameObjects.add(cameraController);
 			
 			player = new Player(new Vec2(100, 100));
 			rope = new Rope();
 			
-			gameObjects.add(new SampleBox(20, 33, false));
-			gameObjects.add(new SampleBox(21, 15, true));
+			//gameObjects.add(new SampleBox(20, 33, false));
+			//gameObjects.add(new SampleBox(21, 15, true));
 			
-			gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
-					new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
-			}));
+			//gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
+			//		new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
+			//}));
 			
-			gameObjects.add(new Obstacle(100, 800, 800, 100));
+			//gameObjects.add(new Obstacle(100, 800, 800, 100));
 			
 			Vec2 vertices [] = new Vec2 [7];
 			float a = 0;
@@ -107,7 +107,7 @@ public class Game {
 			       vertices[i] = new Vec2( (float) Math.sin(a) * 30, (float) Math.cos(a) * 30);
 			
 			
-			gameObjects.add(new Obstacle(425, 200, vertices));
+			//gameObjects.add(new Obstacle(425, 200, vertices));
 	
 			//obst = new Obstacle
 			

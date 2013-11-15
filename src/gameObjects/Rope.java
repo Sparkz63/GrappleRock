@@ -126,7 +126,8 @@ public class Rope implements IGameObject {
 
 		    {
 		      PolygonShape shape = new PolygonShape();
-		      shape.setAsBox(0.6f, 0.125f);
+		      //shape.setAsBox(0.6f, 0.125f);
+		      shape.setAsBox(0.125f,1.2f);
 
 		      FixtureDef fd = new FixtureDef();
 		      fd.shape = shape;
@@ -138,14 +139,14 @@ public class Rope implements IGameObject {
 
 		      final float y = 25.0f;
 		      Body prevBody = ground;
-		      for (int i = 20; i < 50; ++i) {
+		      for (int i = 20; i < 35; ++i) {
 		        BodyDef bd = new BodyDef();
 		        bd.type = BodyType.DYNAMIC;
-		        bd.position.set(0.5f + i, y);
+		        bd.position.set(y, 60f - 2 * i);
 		        Body body = Game.world.createBody(bd);
 		        body.createFixture(fd);
 
-		        Vec2 anchor = new Vec2(i, y);
+		        Vec2 anchor = new Vec2(y, 2 * i);
 		        jd.initialize(prevBody, body, anchor);
 		        Game.world.createJoint(jd);
 

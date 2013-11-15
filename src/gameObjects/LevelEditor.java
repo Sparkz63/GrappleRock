@@ -225,14 +225,11 @@ public class LevelEditor {
 	public static void startAddingObstacle(){
 		//Self-explanatory
 		
-		addingObstacle = true;
 		inputVertices.clear();
 	}
 	
 	public static void addObstacle(){
 		//Create a new obstacle using the current set of vertices
-		
-		addingObstacle = false;
 		
 		//We need at least 3 vertices to define a polygon
 		if(inputVertices.size() < 3)
