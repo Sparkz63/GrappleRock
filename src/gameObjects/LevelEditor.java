@@ -1,16 +1,12 @@
 package gameObjects;
 
 import static game.Params.*;
-
 import game.Params;
-
 import java.util.ArrayList;
-
 import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-
 import static org.lwjgl.opengl.GL11.*;
 import util.InputHandler;
 
@@ -25,7 +21,7 @@ public class LevelEditor {
 	private static boolean addingObstacle = false;
 	private static State state = State.Normal;
 	
-	private static int grabbedObstacle;
+	private static int grabbedObstacle = -1;
 	
 	private LevelEditor(){
 		//Private constructor completely prevents instantiation
@@ -34,9 +30,10 @@ public class LevelEditor {
 	public static void initialize(){
 		InputHandler.create();
 		
-		//We'll be using the left shift and return keys
+		//We'll be using the left shift, d key, and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
 		InputHandler.watchKey(Keyboard.KEY_RETURN);
+		InputHandler.watchKey(Keyboard.KEY_D);
 		
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
@@ -72,7 +69,6 @@ public class LevelEditor {
 			
 			//If click occurs on an obstacle
 			if((grabbedObstacle = grabObstacle()) != -1){
-				
 				//Get the vector offset between obstacle's position and mouse position
 				movingOffset.x = InputHandler.mouse().x - obstacles.get(grabbedObstacle).getPosition().x;
 				movingOffset.y = InputHandler.mouse().y - obstacles.get(grabbedObstacle).getPosition().y;
@@ -81,10 +77,14 @@ public class LevelEditor {
 			}
 		}
 		
+		//Delete the currently selected obstacle
+		if(InputHandler.keyDownEvent(Keyboard.KEY_D) && grabbedObstacle != -1){
+			delObstacle();
+		}
+				
 		//If user presses enter, print out the number of obstacles (unnecessary at this point)
 		if(InputHandler.keyDownEvent(Keyboard.KEY_RETURN))
 			System.out.println(obstacles.size());
-				
 	}
 	
 	public static void movingUpdate(){
@@ -94,14 +94,12 @@ public class LevelEditor {
 		newPosition = snapToGrid(newPosition);
 		
 		obstacles.get(grabbedObstacle).setPosition(newPosition);
-		
 
 		if(InputHandler.leftMouseUp())
 			state = State.Normal;
 	}
 	
 	public static void creatingUpdate(){
-		
 		//If full click while adding an obstacle, add a new vertex
 		if(InputHandler.leftMouseDown())
 			addVertex();
@@ -253,5 +251,12 @@ public class LevelEditor {
 		
 		//Add localized vertex (that is, relative to the obstacle's position)
 		inputVertices.add(temp);
+	}
+	
+	public static void delObstacle(){
+		//Delete an obstacle that has been selected
+		
+		//Delete currently grabbed obstacle
+		obstacles.remove(grabbedObstacle);
 	}
 }
