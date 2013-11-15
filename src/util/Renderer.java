@@ -33,7 +33,6 @@ public class Renderer {
 			Vec2 vertex = vertices[i];
 			
 			vertex = vertex.mul(metersToPixels);
-			System.out.println(vertex.x + " " + vertex.y);
 			
 			glVertex2f(vertex.x, vertex.y);
 		}

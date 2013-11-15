@@ -25,8 +25,8 @@ public class Params {
 	public static final float metersToPixels = 30.0f;
 	public static final float pixelsToMeters = 1.0f / metersToPixels;		// conversion ratio
 	
-	public static final float [] obstacleOutlineColor4f = new float [] {0f, 0f, 0f, .7f};		
-	public static final int obstacleOutlineSize = 3;
+	public static final float [] obstacleOutlineColor4f = new float [] {1.0f, 0f, 0f, .7f};		
+	public static final int obstacleOutlineSize = 1;
 	public static final float [] obstacleFillColor4f = new float [] {.1f, .1f, 1f, .5f};
 
 		
