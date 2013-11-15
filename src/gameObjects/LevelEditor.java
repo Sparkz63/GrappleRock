@@ -22,7 +22,6 @@ public class LevelEditor {
 	
 	private static Vec2 obstaclePosition = new Vec2();
 	private static Vec2 movingOffset = new Vec2();
-	private static boolean addingObstacle = false;
 	private static State state = State.Normal;
 	
 	private static int grabbedObstacle;
