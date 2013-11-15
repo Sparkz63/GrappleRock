@@ -4,6 +4,7 @@ import gameObjects.IGameObject;
 import gameObjects.LevelEditor;
 import gameObjects.Obstacle;
 import gameObjects.Player;
+import gameObjects.Rope;
 import gameObjects.SampleBox;
 import gameObjects.SampleObject;
 
@@ -34,6 +35,7 @@ public class Game {
     public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
     public static ArrayList<Obstacle> obstacles;
     public static Player player;
+    public static Rope rope;
     
     public static Obstacle obst; //Temporary, for debugging
 	
@@ -70,6 +72,7 @@ public class Game {
 	// Initialize things
 	private static void initialize() {
 		player = new Player(new Vec2(100, 100));
+		rope = new Rope();
 		
 		gameObjects.add(new SampleBox(20, 33, false));
 		gameObjects.add(new SampleBox(21, 15, true));
@@ -106,6 +109,7 @@ public class Game {
 		}
 		
 		player.update(deltaTime);
+		rope.update(deltaTime);
 		
 		world.step((float) deltaTime / 1000f, 8, 3);
 	}
@@ -120,6 +124,7 @@ public class Game {
 		}
 		
 		player.render();
+		rope.render();
 		
         Display.setTitle("FPS: " + calculatedFPS); 	// Render FPS counter
         
