@@ -73,23 +73,15 @@ class Link{
 		body.createFixture(boxFixture);
 
 		RevoluteJointDef jointDef = new RevoluteJointDef();
-		Vec2 anchor = new Vec2(x, y);
-		/*jointDef.bodyA = body;
-		jointDef.bodyB = parent.body;
-		jointDef.localAnchorA.set(0, height / 2.0f - width / 2.0f);
-		jointDef.localAnchorB.set(0, - height / 2.0f + width / 2.0f);*/
+		Vec2 anchor = new Vec2(x, y - height / 2.0f + width / 2.0f);
 		jointDef.collideConnected = false;
 		jointDef.initialize(body, parent.body, anchor);
 		
 		Game.world.createJoint(jointDef);
 	}
 	
-	public static Link deadWeight(Link p){
-		//Useless function
-		Link link = new Link(p);
-		link.body.setType(BodyType.DYNAMIC);
-		
-		return link;
+	public void makeDeadWeight(float weight){
+		body.getFixtureList().setDensity(weight);
 	}
 	
 	public void render(){
@@ -104,11 +96,11 @@ public class Rope implements IGameObject {
 	Link head, tail;
 	
 	public Rope(){
-		//initialize();
-		initTest(false);
+		initialize();
+		//initTest(false);
 	}
 
-	 public void initTest(boolean deserialized) {
+	 /*public void initTest(boolean deserialized) {
 		    if (deserialized) {
 		      return;
 		    }
@@ -153,7 +145,7 @@ public class Rope implements IGameObject {
 		        prevBody = body;
 		      }
 		    }
-		  }
+		  }*/
 	
 	public void initialize(){
 		head = tail = new Link(200, 700);
@@ -161,10 +153,10 @@ public class Rope implements IGameObject {
 		for(int a = 0; a < 20; a++)
 			addLink();
 		
-		tail = Link.deadWeight(tail);
+		tail.makeDeadWeight(1);
 		
 		Vec2 temp = new Vec2(tail.body.getPosition().x + 25, tail.body.getPosition().y + 25);
-		//tail.body.setTransform(temp, 0.0f);
+		tail.body.setTransform(temp, 0.0f);
 	}
 	
 	public void addLink(){

@@ -41,7 +41,7 @@ public class Game {
 	
 	public static Camera camera = new Camera(0, 0);
 	
-	public static World world = new World(new Vec2(0f, -10f));				// jBox2d World
+	public static World world = new World(new Vec2(0f, -80f));				// jBox2d World
 
     public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
     public static ArrayList<Obstacle> obstacles;
