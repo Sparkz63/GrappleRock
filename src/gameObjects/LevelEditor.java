@@ -1,7 +1,6 @@
 package gameObjects;
 
 import static game.Params.*;
-
 import game.Params;
 
 import java.util.ArrayList;
@@ -12,6 +11,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import static org.lwjgl.opengl.GL11.*;
+import util.Camera;
+import gameObjects.CameraController;
 import util.InputHandler;
 
 enum State{Normal, Creating, Moving, Modifying}
@@ -19,6 +20,9 @@ enum State{Normal, Creating, Moving, Modifying}
 public class LevelEditor {
 	private static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 	private static ArrayList<Vec2> inputVertices = new ArrayList<Vec2>();
+	
+	private static Camera camera = new Camera(0, 0);
+	private static CameraController cameraController = new CameraController(camera);
 	
 	private static Vec2 obstaclePosition = new Vec2();
 	private static Vec2 movingOffset = new Vec2();
@@ -33,6 +37,7 @@ public class LevelEditor {
 	
 	public static void initialize(){
 		InputHandler.create();
+		InputHandler.setCamera(camera);
 		
 		//We'll be using the left shift and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
@@ -41,9 +46,11 @@ public class LevelEditor {
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 	
-	public static void update(){
+	public static void update(int deltaTime){
 		//Update input flags
 		InputHandler.update();
+		
+		cameraController.update(deltaTime);
 		
 		switch(state){
 		case Modifying:
@@ -116,6 +123,8 @@ public class LevelEditor {
 	
 	public static void render(){
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		camera.adjustViewMatrix();
 		
 		renderObstacles();
 		

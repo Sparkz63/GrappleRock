@@ -1,5 +1,6 @@
 package game;
 
+import gameObjects.CameraController;
 import gameObjects.IGameObject;
 import gameObjects.LevelEditor;
 import gameObjects.Obstacle;
@@ -19,6 +20,8 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import util.Camera;
+import util.InputHandler;
 import static org.lwjgl.opengl.GL11.*;
 import static game.Params.*;
 
@@ -31,7 +34,10 @@ public class Game {
 	private static int 		deltaTime = 0;			// Time since last frame
 	private static int		calculatedFPS = 0;		// Frames Per Second
 	
+	public static Camera camera = new Camera(0, 0);
+	
 	public static World world = new World(new Vec2(0f, -10f));				// jBox2d World
+
     public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
     public static ArrayList<Obstacle> obstacles;
     public static Player player;
@@ -62,7 +68,7 @@ public class Game {
 			deltaTime = getDeltaTime();		// update timers: delta time and fps counter
 			updateFPS();
 			
-			LevelEditor.update();
+			LevelEditor.update(deltaTime);
 			LevelEditor.render();
 		}
 			
@@ -71,34 +77,45 @@ public class Game {
 	
 	// Initialize things
 	private static void initialize() {
-		player = new Player(new Vec2(100, 100));
-		rope = new Rope();
+		try {
+			InputHandler.setCamera(camera);
+			camera.setRestrictingCoordinates(-100, -100, screenWidth + 100, screenHeight + 100);
 		
-		gameObjects.add(new SampleBox(20, 33, false));
-		gameObjects.add(new SampleBox(21, 15, true));
+			CameraController cameraController = new CameraController(camera);
+			gameObjects.add(cameraController);
+			
+			player = new Player(new Vec2(100, 100));
+			rope = new Rope();
+			
+			gameObjects.add(new SampleBox(20, 33, false));
+			gameObjects.add(new SampleBox(21, 15, true));
+			
+			gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
+					new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
+			}));
+			
+			gameObjects.add(new Obstacle(100, 800, 800, 100));
+			
+			Vec2 vertices [] = new Vec2 [7];
+			float a = 0;
+			for (int i = 0; a < Math.toRadians(360); a += Math.toRadians(52), i++) 
+			       vertices[i] = new Vec2( (float) Math.sin(a) * 30, (float) Math.cos(a) * 30);
+			
+			
+			gameObjects.add(new Obstacle(425, 200, vertices));
+	
+			//obst = new Obstacle
+			
+			for(IGameObject gameObject: gameObjects){
+				gameObject.initialize();
+			}
+			
+			player.initialize();
 		
-		gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
-				new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
-		}));
-		
-		gameObjects.add(new Obstacle(100, 800, 800, 100));
-		
-		Vec2 vertices [] = new Vec2 [7];
-		float a = 0;
-		for (int i = 0; a < Math.toRadians(360); a += Math.toRadians(52), i++) 
-		       vertices[i] = new Vec2( (float) Math.sin(a) * 30, (float) Math.cos(a) * 30);
-		
-		
-		gameObjects.add(new Obstacle(425, 200, vertices));
-
-		//obst = new Obstacle
-		
-		for(IGameObject gameObject: gameObjects){
-			gameObject.initialize();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
 		}
-		
-		player.initialize();
-		
 	}
 	
 	// update all game objects
@@ -118,6 +135,8 @@ public class Game {
 	private static void render() {
 		
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		camera.adjustViewMatrix();
 		
 		for (IGameObject gameObject : gameObjects){
 			gameObject.render();
