@@ -12,6 +12,7 @@ import org.lwjgl.opengl.Display;
 
 import static org.lwjgl.opengl.GL11.*;
 import util.Camera;
+import util.GRMouse;
 import gameObjects.CameraController;
 import util.InputHandler;
 
@@ -36,7 +37,7 @@ public class LevelEditor {
 	
 	public static void initialize(){
 		InputHandler.create();
-		InputHandler.setCamera(camera);
+		GRMouse.setCamera(camera);
 		
 		//We'll be using the left shift and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
@@ -80,8 +81,8 @@ public class LevelEditor {
 			if((grabbedObstacle = grabObstacle()) != -1){
 				
 				//Get the vector offset between obstacle's position and mouse position
-				movingOffset.x = InputHandler.mouse().x - obstacles.get(grabbedObstacle).getPosition().x;
-				movingOffset.y = InputHandler.mouse().y - obstacles.get(grabbedObstacle).getPosition().y;
+				movingOffset.x = GRMouse.x() - obstacles.get(grabbedObstacle).getPosition().x;
+				movingOffset.y = GRMouse.y() - obstacles.get(grabbedObstacle).getPosition().y;
 				
 				state = State.Moving;
 			}
@@ -96,7 +97,7 @@ public class LevelEditor {
 	public static void movingUpdate(){
 		//Moving state
 		
-		Vec2 newPosition = new Vec2(InputHandler.mouse().x - movingOffset.x, InputHandler.mouse().y - movingOffset.y);
+		Vec2 newPosition = new Vec2(GRMouse.x() - movingOffset.x, GRMouse.y() - movingOffset.y);
 		newPosition = snapToGrid(newPosition);
 		
 		obstacles.get(grabbedObstacle).setPosition(newPosition);
@@ -175,7 +176,7 @@ public class LevelEditor {
 		
 		if (inputVertices.size() > 0) {
 			glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
-			Vec2 snappedMousePosition = snapToGrid(new Vec2 (InputHandler.mouse()));
+			Vec2 snappedMousePosition = snapToGrid(new Vec2 (GRMouse.x(), GRMouse.y()));
 			glVertex2f(snappedMousePosition.x, snappedMousePosition.y);
 		}
 
@@ -213,7 +214,7 @@ public class LevelEditor {
 		
 		int a = 0;
 		
-		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(InputHandler.mouse().x, InputHandler.mouse().y)))
+		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(GRMouse.x(), GRMouse.y())))
 			a++;
 		
 		if(a < obstacles.size())
@@ -247,11 +248,11 @@ public class LevelEditor {
 		//Add a vertex at current mouse location
 
 		//Snap mouse position to grid
-		Vec2 temp = new Vec2(InputHandler.mouse().x, InputHandler.mouse().y);
+		Vec2 temp = new Vec2(GRMouse.x(), GRMouse.y());
 
 		//If this is the first vertex, then use it as the obstacle position
 		if(inputVertices.size() == 0)
-			obstaclePosition = snapToGrid(new Vec2(InputHandler.mouse()));
+			obstaclePosition = snapToGrid(new Vec2(GRMouse.x(), GRMouse.y()));
 		
 		temp = snapToGrid(temp);	
 		temp.x -= obstaclePosition.x;

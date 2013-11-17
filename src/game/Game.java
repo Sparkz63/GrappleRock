@@ -83,7 +83,6 @@ public class Game {
 	// Initialize things
 	private static void initialize() {
 		try {
-			InputHandler.setCamera(camera);
 			camera.setRestrictingCoordinates(-100, -100, screenWidth + 100, screenHeight + 100);
 		
 			CameraController cameraController = new CameraController(camera);

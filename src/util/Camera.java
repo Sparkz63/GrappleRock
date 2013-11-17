@@ -79,11 +79,11 @@ public class Camera {
 
 	}
 	
-	public int getWorldXCoordinate(int screenX) {
+	public float getWorldXCoordinate(float screenX) {
 		return x + screenX;
 	}	
 	
-	public int getWorldYCoordinate(int screenY) {
+	public float getWorldYCoordinate(float screenY) {
 		return y + screenY;
 	}
 }
