@@ -132,7 +132,7 @@ public class Game {
 		player.update(deltaTime);
 		rope.update(deltaTime);
 		
-		world.step((float) deltaTime / 1000f, 8, 3);
+		world.step((float) deltaTime / 1000f, 80, 30);
 	}
 	
 	// render all game objects

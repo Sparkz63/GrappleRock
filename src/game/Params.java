@@ -5,7 +5,7 @@ import java.awt.Toolkit;
 public class Params {
 	
 	public static final boolean editorMode = false;	//True if running level editor, false if playing game
-	public static final	int	editorSnapValue = 32;	
+	public static final	int	editorSnapValue = 32;
 	
 	public static float widthHeightRatio = 1.25f;
 	public static float screenHeightFactor = 0.75f; //Window height will be 0.75 of hardware screen height
