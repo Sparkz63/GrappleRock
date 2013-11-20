@@ -8,6 +8,7 @@ import gameObjects.Player;
 import gameObjects.Rope;
 import gameObjects.SampleBox;
 import gameObjects.SampleObject;
+import gameObjects.Terrain;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,15 +19,13 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-
 import util.Renderer;
-
 import util.Camera;
 import util.InputHandler;
-
 import static org.lwjgl.opengl.GL11.*;
 import static game.Params.*;
 
@@ -39,42 +38,33 @@ public class Game {
 	private static int 		deltaTime = 0;			// Time since last frame
 	private static int		calculatedFPS = 0;		// Frames Per Second
 	
-	public static Camera camera = new Camera(0, 0);
+	//public static Camera camera = new Camera(projectionWidth / 2.0f, projectionHeight / 2.0f);
+	//public static CameraController cameraController = new CameraController(camera);
 	
-	public static World world = new World(new Vec2(0f, -80f));				// jBox2d World
+	public static World world = new World(new Vec2(0f, -20f));				// jBox2d World
 
-    public static final Set<IGameObject> gameObjects = new HashSet<IGameObject>();	// GameObjects
-    public static ArrayList<Obstacle> obstacles;
+    //public static ArrayList<Obstacle> Terrain.obstacles = new ArrayList<Obstacle>();
     public static Player player;
-    public static Rope rope;
     
-    public static Obstacle obst; //Temporary, for debugging
-	
 	// update game objects, render, manage timing
 	public static void startGameLoop() {
-		initialize();
 		
-		while (!Display.isCloseRequested()) {
-			deltaTime = getDeltaTime();		// update timers: delta time and fps counter
-			updateFPS();
-			
-			update();
-			
-			render();
-		}
-			
-		Display.destroy();
-	}
-	
-	public static void startEditorLoop(){
+		//Initialize both game modes
+		initialize();
 		LevelEditor.initialize();
 		
 		while (!Display.isCloseRequested()) {
 			deltaTime = getDeltaTime();		// update timers: delta time and fps counter
 			updateFPS();
 			
-			LevelEditor.update(deltaTime);
-			LevelEditor.render();
+			if(!editorMode){
+				update();
+				render();
+			}
+			else{
+				LevelEditor.update(deltaTime);
+				LevelEditor.render();
+			}
 		}
 			
 		Display.destroy();
@@ -83,36 +73,26 @@ public class Game {
 	// Initialize things
 	private static void initialize() {
 		try {
-			camera.setRestrictingCoordinates(-100, -100, screenWidth + 100, screenHeight + 100);
+			
+			InputHandler.create();
+			InputHandler.watchKey(Keyboard.KEY_A);
+			InputHandler.watchKey(Keyboard.KEY_D);
+			InputHandler.watchKey(Keyboard.KEY_TAB);
+			
+			Camera.init(projectionWidth / 2.0f, projectionHeight / 2.0f);
+			
+			//camera.setRestrictingCoordinates(-100, -100, screenWidth + 100, screenHeight + 100);
 		
-			CameraController cameraController = new CameraController(camera);
-			//gameObjects.add(cameraController);
 			
-			player = new Player(new Vec2(100, 100));
-			rope = new Rope();
 			
-			//gameObjects.add(new SampleBox(20, 33, false));
-			//gameObjects.add(new SampleBox(21, 15, true));
+			Terrain.obstacles.add(new Obstacle(100, 800, 800, 100));
 			
-			//gameObjects.add(new Obstacle(450, 30, new Vec2 [] {
-			//		new Vec2(0, 0), new Vec2(90, 30), new Vec2(90, -30)
-			//}));
-			
-			//gameObjects.add(new Obstacle(100, 800, 800, 100));
+			player = new Player(new Vec2(100, 600));
 			
 			Vec2 vertices [] = new Vec2 [7];
 			float a = 0;
 			for (int i = 0; a < Math.toRadians(360); a += Math.toRadians(52), i++) 
 			       vertices[i] = new Vec2( (float) Math.sin(a) * 30, (float) Math.cos(a) * 30);
-			
-			
-			//gameObjects.add(new Obstacle(425, 200, vertices));
-	
-			//obst = new Obstacle
-			
-			for(IGameObject gameObject: gameObjects){
-				gameObject.initialize();
-			}
 			
 			player.initialize();
 		
@@ -124,13 +104,15 @@ public class Game {
 	
 	// update all game objects
 	private static void update() {
-	
-		for (IGameObject gameObject : gameObjects){
-			gameObject.update(deltaTime);
-		}
+		
+		InputHandler.update();
 		
 		player.update(deltaTime);
-		rope.update(deltaTime);
+		
+		CameraController.followPlayer(player.position(), deltaTime);
+		
+		if(InputHandler.keyDownEvent(Keyboard.KEY_TAB))
+			editorMode = true;
 		
 		world.step((float) deltaTime / 1000f, 80, 30);
 	}
@@ -140,18 +122,15 @@ public class Game {
 		
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		camera.adjustViewMatrix();
+		Camera.adjustViewMatrix();
 		
-		for (IGameObject gameObject : gameObjects){
-			gameObject.render();
-		}
-		
-		for(Body b = world.getBodyList(); b != null; b = b.getNext()){
-			Renderer.renderFrame(b);
-		}
+		//for(Body b = world.getBodyList(); b != null; b = b.getNext()){
+		//	Renderer.renderFrame(b);
+		//}
+		for(int a = 0; a < Terrain.obstacles.size(); a++)
+			Terrain.obstacles.get(a).render();
 		
 		player.render();
-		rope.render();
 		
         Display.setTitle("FPS: " + calculatedFPS); 	// Render FPS counter
         
@@ -173,7 +152,7 @@ public class Game {
 	// Set up Projection Matrix
 	private static void setUpMatrices () {
 		glMatrixMode(GL_PROJECTION);
-		glOrtho(0, Params.projectionWidth, 0, Params.projectionHeight, 1, -1);
+		glOrtho(-projectionWidth / 2.0f, projectionWidth / 2.0f, -projectionHeight / 2.0f, projectionHeight / 2.0f, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		
 	}
@@ -204,9 +183,9 @@ public class Game {
 	public static void main(String[] argv) {
 		setUpDisplay();
 		setUpMatrices();
-		if(editorMode)
-			startEditorLoop();
-		else
+		//if(editorMode)
+		//	startEditorLoop();
+		//else
 			startGameLoop();
 	}
 }

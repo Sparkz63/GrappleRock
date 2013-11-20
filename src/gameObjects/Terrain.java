@@ -1,5 +1,7 @@
 package gameObjects;
 
+import java.util.ArrayList;
+
 public class Terrain {
-	// Contains Obstacles and shit
+	public static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 }

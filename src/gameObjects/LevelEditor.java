@@ -19,11 +19,11 @@ import util.InputHandler;
 enum State{Normal, Creating, Moving, Modifying}
 
 public class LevelEditor {
-	private static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+	//private static ArrayList<Obstacle> Terrain.obstacles = new ArrayList<Obstacle>();
 	private static ArrayList<Vec2> inputVertices = new ArrayList<Vec2>();
 	
-	private static Camera camera = new Camera(0, 0);
-	private static CameraController cameraController = new CameraController(camera);
+	//private static Camera camera = new Camera(projectionWidth / 2.0f, projectionHeight / 2.0f);
+	//private static CameraController cameraController = new CameraController(camera);
 	
 	private static Vec2 obstaclePosition = new Vec2();
 	private static Vec2 movingOffset = new Vec2();
@@ -36,8 +36,7 @@ public class LevelEditor {
 	}
 	
 	public static void initialize(){
-		InputHandler.create();
-		GRMouse.setCamera(camera);
+		//GRMouse.setCamera(camera);
 		
 		//We'll be using the left shift and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
@@ -46,11 +45,14 @@ public class LevelEditor {
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 	
-	public static void update(int deltaTime){
+	public static void update(long deltaTime){
 		//Update input flags
 		InputHandler.update();
 		
-		cameraController.update(deltaTime);
+		if(InputHandler.keyDownEvent(Keyboard.KEY_TAB))
+			editorMode = false;
+		
+		CameraController.followKeys(deltaTime);
 		
 		switch(state){
 		case Modifying:
@@ -81,16 +83,16 @@ public class LevelEditor {
 			if((grabbedObstacle = grabObstacle()) != -1){
 				
 				//Get the vector offset between obstacle's position and mouse position
-				movingOffset.x = GRMouse.x() - obstacles.get(grabbedObstacle).getPosition().x;
-				movingOffset.y = GRMouse.y() - obstacles.get(grabbedObstacle).getPosition().y;
+				movingOffset.x = GRMouse.x() - Terrain.obstacles.get(grabbedObstacle).getPosition().x;
+				movingOffset.y = GRMouse.y() - Terrain.obstacles.get(grabbedObstacle).getPosition().y;
 				
 				state = State.Moving;
 			}
 		}
 		
-		//If user presses enter, print out the number of obstacles (unnecessary at this point)
+		//If user presses enter, print out the number of Terrain.obstacles (unnecessary at this point)
 		if(InputHandler.keyDownEvent(Keyboard.KEY_RETURN))
-			System.out.println(obstacles.size());
+			System.out.println(Terrain.obstacles.size());
 				
 	}
 	
@@ -100,7 +102,7 @@ public class LevelEditor {
 		Vec2 newPosition = new Vec2(GRMouse.x() - movingOffset.x, GRMouse.y() - movingOffset.y);
 		newPosition = snapToGrid(newPosition);
 		
-		obstacles.get(grabbedObstacle).setPosition(newPosition);
+		Terrain.obstacles.get(grabbedObstacle).setPosition(newPosition);
 		
 
 		if(InputHandler.leftMouseUp())
@@ -124,7 +126,7 @@ public class LevelEditor {
 	public static void render(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		camera.adjustViewMatrix();
+		Camera.adjustViewMatrix();
 		
 		renderObstacles();
 		
@@ -159,8 +161,8 @@ public class LevelEditor {
 	}
 
 	public static void renderObstacles(){
-		for(int a = 0; a < obstacles.size(); a++)
-			obstacles.get(a).render();
+		for(int a = 0; a < Terrain.obstacles.size(); a++)
+			Terrain.obstacles.get(a).render();
 	}
 	
 	public static void renderVertices(){
@@ -192,7 +194,7 @@ public class LevelEditor {
 	}
 	
 	private static void renderGrid() {
-		// Render snap grid for obstacles
+		// Render snap grid for Terrain.obstacles
 		
 		glColor4f(editorSnapGridColor4f[0], editorSnapGridColor4f[1], editorSnapGridColor4f[2], editorSnapGridColor4f[3]);
 		glPointSize(editorGridPointSize);
@@ -214,10 +216,10 @@ public class LevelEditor {
 		
 		int a = 0;
 		
-		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(GRMouse.x(), GRMouse.y())))
+		while(a < Terrain.obstacles.size() && !Terrain.obstacles.get(a).testPoint(new Vec2(GRMouse.x(), GRMouse.y())))
 			a++;
 		
-		if(a < obstacles.size())
+		if(a < Terrain.obstacles.size())
 			return a;
 		else
 			return -1;
@@ -239,7 +241,7 @@ public class LevelEditor {
 		//Convert ArrayList into a regular array
 		Vec2[] verts = inputVertices.toArray(new Vec2[inputVertices.size()]);
 		
-		obstacles.add(new Obstacle(obstaclePosition.x, obstaclePosition.y, verts));
+		Terrain.obstacles.add(new Obstacle(obstaclePosition.x, obstaclePosition.y, verts));
 
 		inputVertices.clear();
 	}
