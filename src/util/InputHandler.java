@@ -3,12 +3,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import util.Camera;
-
 import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import static game.Params.*;
 
 class KeyEvent{
 	private boolean isDown, downEvent, upEvent;
@@ -65,17 +62,12 @@ public class InputHandler {
 	private static KeyEvent keyEvents[] = new KeyEvent[256];
 	private static KeyEvent leftMouseEvent = new KeyEvent();
 	private static Vec2 mouse = new Vec2();
-	private static Camera currentCamera;
 	
 	public static void create(){
 		//Basically a constructor that must be called explicitly before InputHandler can be used
 		
 		for(int a = 0; a < keyEvents.length; a++)
 			keyEvents[a] = new KeyEvent();
-	}
-	
-	public static void setCamera(Camera camera){
-		currentCamera = camera;
 	}
 	
 	private InputHandler(){
@@ -90,7 +82,7 @@ public class InputHandler {
 		checkKeys();
 	}
 	
-	public static void checkKeys(){
+	private static void checkKeys(){
 		//Update event flags for all keys being watched
 		
 		//Iterate over the set
@@ -103,17 +95,12 @@ public class InputHandler {
 		}
 	}
 	
-	public static void getMouseLocation(){
-		mouse.x = Mouse.getX() * windowToProjCoords;
-		mouse.y = Mouse.getY() * windowToProjCoords;
-		
-		if (null != currentCamera) {
-			mouse.x = currentCamera.getWorldXCoordinate((int) mouse.x);
-			mouse.y = currentCamera.getWorldYCoordinate((int) mouse.y);
-		}
+	private static void getMouseLocation(){
+		mouse.x = Mouse.getX();
+		mouse.y = Mouse.getY();
 	}
 	
-	public static void checkMouseButtons(){
+	private static void checkMouseButtons(){
 		leftMouseEvent.updateEvents(Mouse.isButtonDown(0));
 	}
 	

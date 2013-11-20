@@ -9,17 +9,18 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import util.Camera;
+import util.GRMouse;
 import gameObjects.CameraController;
 import util.InputHandler;
 
 enum State{Normal, Creating, Moving, Modifying}
 
 public class LevelEditor {
-	private static ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+	//private static ArrayList<Obstacle> Terrain.obstacles = new ArrayList<Obstacle>();
 	private static ArrayList<Vec2> inputVertices = new ArrayList<Vec2>();
 	
-	private static Camera camera = new Camera(0, 0);
-	private static CameraController cameraController = new CameraController(camera);
+	//private static Camera camera = new Camera(projectionWidth / 2.0f, projectionHeight / 2.0f);
+	//private static CameraController cameraController = new CameraController(camera);
 	
 	private static Vec2 obstaclePosition = new Vec2();
 	private static Vec2 movingOffset = new Vec2();
@@ -32,22 +33,24 @@ public class LevelEditor {
 	}
 	
 	public static void initialize(){
-		InputHandler.create();
-		InputHandler.setCamera(camera);
+		//GRMouse.setCamera(camera);
 		
-		//We'll be using the left shift, d key, and return keys
+		//We'll be using the left shift, l key, and return keys
 		InputHandler.watchKey(Keyboard.KEY_LSHIFT);
 		InputHandler.watchKey(Keyboard.KEY_RETURN);
-		InputHandler.watchKey(Keyboard.KEY_D);
+		InputHandler.watchKey(Keyboard.KEY_L);
 		
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 	
-	public static void update(int deltaTime){
+	public static void update(long deltaTime){
 		//Update input flags
 		InputHandler.update();
 		
-		cameraController.update(deltaTime);
+		if(InputHandler.keyDownEvent(Keyboard.KEY_TAB))
+			editorMode = false;
+		
+		CameraController.followKeys(deltaTime);
 		
 		switch(state){
 		case Modifying:
@@ -77,30 +80,26 @@ public class LevelEditor {
 			//If click occurs on an obstacle
 			if((grabbedObstacle = grabObstacle()) != -1){
 				//Get the vector offset between obstacle's position and mouse position
-				movingOffset.x = InputHandler.mouse().x - obstacles.get(grabbedObstacle).getPosition().x;
-				movingOffset.y = InputHandler.mouse().y - obstacles.get(grabbedObstacle).getPosition().y;
+				movingOffset.x = GRMouse.x() - Terrain.obstacles.get(grabbedObstacle).getPosition().x;
+				movingOffset.y = GRMouse.y() - Terrain.obstacles.get(grabbedObstacle).getPosition().y;
 				
 				state = State.Moving;
 			}
 		}
 		
 		//Delete the currently selected obstacle
-		if(InputHandler.keyDownEvent(Keyboard.KEY_D) && grabbedObstacle != -1){
+		if(InputHandler.keyDownEvent(Keyboard.KEY_L) && grabbedObstacle != -1){
 			delObstacle();
 		}
-				
-		//If user presses enter, print out the number of obstacles (unnecessary at this point)
-		if(InputHandler.keyDownEvent(Keyboard.KEY_RETURN))
-			System.out.println(obstacles.size());
 	}
 	
 	public static void movingUpdate(){
 		//Moving state
 		
-		Vec2 newPosition = new Vec2(InputHandler.mouse().x - movingOffset.x, InputHandler.mouse().y - movingOffset.y);
+		Vec2 newPosition = new Vec2(GRMouse.x() - movingOffset.x, GRMouse.y() - movingOffset.y);
 		newPosition = snapToGrid(newPosition);
 		
-		obstacles.get(grabbedObstacle).setPosition(newPosition);
+		Terrain.obstacles.get(grabbedObstacle).setPosition(newPosition);
 
 		if(InputHandler.leftMouseUp())
 			state = State.Normal;
@@ -122,7 +121,7 @@ public class LevelEditor {
 	public static void render(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		camera.adjustViewMatrix();
+		Camera.adjustViewMatrix();
 		
 		renderObstacles();
 		
@@ -157,8 +156,8 @@ public class LevelEditor {
 	}
 
 	public static void renderObstacles(){
-		for(int a = 0; a < obstacles.size(); a++)
-			obstacles.get(a).render();
+		for(int a = 0; a < Terrain.obstacles.size(); a++)
+			Terrain.obstacles.get(a).render();
 	}
 	
 	public static void renderVertices(){
@@ -174,7 +173,7 @@ public class LevelEditor {
 		
 		if (inputVertices.size() > 0) {
 			glVertex2f(inputVertices.get(inputVertices.size() - 1).x + obstaclePosition.x, inputVertices.get(inputVertices.size() - 1).y + obstaclePosition.y);
-			Vec2 snappedMousePosition = snapToGrid(new Vec2 (InputHandler.mouse()));
+			Vec2 snappedMousePosition = snapToGrid(new Vec2 (GRMouse.x(), GRMouse.y()));
 			glVertex2f(snappedMousePosition.x, snappedMousePosition.y);
 		}
 
@@ -190,7 +189,7 @@ public class LevelEditor {
 	}
 	
 	private static void renderGrid() {
-		// Render snap grid for obstacles
+		// Render snap grid for Terrain.obstacles
 		
 		glColor4f(editorSnapGridColor4f[0], editorSnapGridColor4f[1], editorSnapGridColor4f[2], editorSnapGridColor4f[3]);
 		glPointSize(editorGridPointSize);
@@ -212,10 +211,10 @@ public class LevelEditor {
 		
 		int a = 0;
 		
-		while(a < obstacles.size() && !obstacles.get(a).testPoint(new Vec2(InputHandler.mouse().x, InputHandler.mouse().y)))
+		while(a < Terrain.obstacles.size() && !Terrain.obstacles.get(a).testPoint(new Vec2(GRMouse.x(), GRMouse.y())))
 			a++;
 		
-		if(a < obstacles.size())
+		if(a < Terrain.obstacles.size())
 			return a;
 		else
 			return -1;
@@ -237,7 +236,7 @@ public class LevelEditor {
 		//Convert ArrayList into a regular array
 		Vec2[] verts = inputVertices.toArray(new Vec2[inputVertices.size()]);
 		
-		obstacles.add(new Obstacle(obstaclePosition.x, obstaclePosition.y, verts));
+		Terrain.obstacles.add(new Obstacle(obstaclePosition.x, obstaclePosition.y, verts));
 
 		inputVertices.clear();
 	}
@@ -246,11 +245,11 @@ public class LevelEditor {
 		//Add a vertex at current mouse location
 
 		//Snap mouse position to grid
-		Vec2 temp = new Vec2(InputHandler.mouse().x, InputHandler.mouse().y);
+		Vec2 temp = new Vec2(GRMouse.x(), GRMouse.y());
 
 		//If this is the first vertex, then use it as the obstacle position
 		if(inputVertices.size() == 0)
-			obstaclePosition = snapToGrid(new Vec2(InputHandler.mouse()));
+			obstaclePosition = snapToGrid(new Vec2(GRMouse.x(), GRMouse.y()));
 		
 		temp = snapToGrid(temp);	
 		temp.x -= obstaclePosition.x;
@@ -264,6 +263,6 @@ public class LevelEditor {
 		//Delete an obstacle that has been selected
 		
 		//Delete currently grabbed obstacle
-		obstacles.remove(grabbedObstacle);
+		Terrain.obstacles.remove(grabbedObstacle);
 	}
 }

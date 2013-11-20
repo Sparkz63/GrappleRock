@@ -4,9 +4,9 @@ import java.awt.Toolkit;
 // Holder for general purpose settings of our game
 public class Params {
 	
-	public static final boolean editorMode = true;	//True if running level editor, false if playing game
-	public static final	int	editorSnapValue = 32;	
-
+	public static boolean editorMode = true;	//True if running level editor, false if playing game
+	public static final	int	editorSnapValue = 32;
+	
 	public static float widthHeightRatio = 1.25f;
 	public static float screenHeightFactor = 0.75f; //Window height will be 0.75 of hardware screen height
 	
@@ -20,7 +20,7 @@ public class Params {
 	
 	public static final boolean fullScreen = false; 	// Not Yet Implemented.
 	
-	public static final int targetFPS = 60;
+	public static final int targetFPS = 30;
 	
 	public static final float metersToPixels = 30.0f;
 	public static final float pixelsToMeters = 1.0f / metersToPixels;		// conversion ratio

@@ -6,33 +6,37 @@ import static game.Params.*;
 
 // Might have to change everything to be based off of projectionWidth and projectionHeight later. IDK.
 public class Camera {
-	private int x, y;					// Location of the camera in world coordinates
+	private static float x, y;					// Location of the camera in world coordinates
 	
-	private int xMin = -1;
-	private int xMax = -1;
+	private static int xMin = -1;
+	private static int xMax = -1;
 	
-	private int yMin = -1;
-	private int yMax = -1;	// Limiting camera coordinates, using edges of screen. -1 = no limits.
+	private static int yMin = -1;
+	private static int yMax = -1;	// Limiting camera coordinates, using edges of screen. -1 = no limits.
 	
-	public Camera(int x, int y) {
-		this.x = x;
-		this.y = y;
+	private Camera(){
+		
 	}
 	
-	public void adjustViewMatrix() {
+	public static void init(float x, float y) {
+		Camera.x = x;
+		Camera.y = y;
+	}
+	
+	public static void adjustViewMatrix() {
 		glLoadIdentity();
-		gluLookAt(	x, y, 1,
-					x, y, 0,
+		gluLookAt(	x , y , 1,
+					x , y , 0,
 					0, 1, 0);
 		
 		//System.out.println(x + ", " + y);
 	}
 	
-	public void setPosition(int xPosition, int yPosition) {
+	public static void setPosition(float xPosition, float yPosition) {
 		x = xPosition;
 		y = yPosition;
 		
-		if (xMin != -1 && x < xMin)
+		/*if (xMin != -1 && x < xMin)
 			x = xMin;
 		
 		if (yMin != -1 && y < yMin) 
@@ -42,20 +46,20 @@ public class Camera {
 			x = xMax - screenWidth;
 		
 		if (yMax != -1 && y + screenHeight > yMax)
-			y = yMax - screenHeight;
+			y = yMax - screenHeight;*/
 		
 		//System.out.println(x + ", " + y);
 	}
 	
-	public int getX() {
+	public static float getX() {
 		return x;
 	}
 	
-	public int getY() {
+	public static float getY() {
 		return y;
 	}
 	
-	public void setRestrictingCoordinates(int xMin, int yMin, int xMax, int yMax) throws Exception {
+	public static void setRestrictingCoordinates(int xMin, int yMin, int xMax, int yMax) throws Exception {
 		// Set smallest and largest coordinates the camera can see.
 		
 		System.out.println("(" + xMin + ", " + yMin + ") (" + xMax + ", " + yMax + ")");
@@ -70,20 +74,20 @@ public class Camera {
 			throw new IllegalArgumentException("Invalid Camera Width Restriction.");
 		}
 		
-		this.xMin = xMin;
-		this.yMin = yMin;
+		Camera.xMin = xMin;
+		Camera.yMin = yMin;
 		
-		this.xMax = xMax;
-		this.yMax = yMax;
+		Camera.xMax = xMax;
+		Camera.yMax = yMax;
 		
 
 	}
 	
-	public int getWorldXCoordinate(int screenX) {
+	public static float getWorldXCoordinate(float screenX) {
 		return x + screenX;
 	}	
 	
-	public int getWorldYCoordinate(int screenY) {
+	public static float getWorldYCoordinate(float screenY) {
 		return y + screenY;
 	}
 }

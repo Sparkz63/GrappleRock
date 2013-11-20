@@ -1,41 +1,38 @@
 package gameObjects;
 
+import org.jbox2d.common.Vec2;
 import org.lwjgl.input.Keyboard;
+
 import util.Camera;
 import gameObjects.IGameObject;
 
 
 
-public class CameraController implements IGameObject {
+public class CameraController{
 	private static final float movementSpeed = 1.5f;
-	private Camera camera;
+	//private Camera Camera;
 	
-	public CameraController(Camera camera) {
-		this.camera = camera;
-	}
-	@Override
-	public void initialize() {
+	private CameraController(){
+		
 	}
 
-	@Override
-	public void update(long deltaTime) {
+	public static void initialize() {
+	}
+
+	public static void followPlayer(Vec2 playerPos, long deltaTime){
+		Camera.setPosition(playerPos.x, playerPos.y);
+	}
+	
+	public static void followKeys(long deltaTime){
 		if (Keyboard.isKeyDown(Keyboard.KEY_W))
-			camera.setPosition(camera.getX(), (int) (camera.getY() + movementSpeed * deltaTime));
+			Camera.setPosition(Camera.getX(), (int) (Camera.getY() + movementSpeed * deltaTime));
 		else if (Keyboard.isKeyDown(Keyboard.KEY_S)) 
-			camera.setPosition(camera.getX(), (int) (camera.getY() - movementSpeed * deltaTime));
+			Camera.setPosition(Camera.getX(), (int) (Camera.getY() - movementSpeed * deltaTime));
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) 
-			camera.setPosition((int) (camera.getX() + movementSpeed * deltaTime), camera.getY());
+			Camera.setPosition((int) (Camera.getX() + movementSpeed * deltaTime), Camera.getY());
 		else if (Keyboard.isKeyDown(Keyboard.KEY_A)) 
-			camera.setPosition((int) (camera.getX() - movementSpeed * deltaTime), camera.getY());
-	}
-
-	@Override
-	public void render() {
-	}
-
-	@Override
-	public void destroy() {
+			Camera.setPosition((int) (Camera.getX() - movementSpeed * deltaTime), Camera.getY());
 	}
 
 }
